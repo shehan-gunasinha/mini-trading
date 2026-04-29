@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/orderservice/src/main/resources/schema.sql" value="e2503e19-63d6-45c0-89b7-fce1ea049386" />
+  </component>
+</project>

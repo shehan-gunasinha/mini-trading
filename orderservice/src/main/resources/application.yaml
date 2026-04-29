@@ -1,0 +1,31 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/order_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
+
+grpc:
+  server:
+    port: 9090
+
+kafka:
+  topics:
+    order-created: order.created
+    order-updated: order.updated
+    order-deleted: order.deleted
+
+logging:
+  level:
+    com.example.orderservice: DEBUG

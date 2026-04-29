@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package order;
+
+option java_multiple_files = true;
+option java_package = "com.trading.orderservice.grpc";
+option java_outer_classname = "OrderProto";
+
+// Messages
+// the 1,2,3... are the filed numbers that helps to identify field inside a coded message
+message CreateOrderRequest {
+  string symbol    = 1;
+  string side      = 2;   // BUY or SELL
+  double quantity  = 3;
+  double price     = 4;
+}
+
+message OrderResponse {
+  string id        = 1;
+  string symbol    = 2;
+  string side      = 3;
+  double quantity  = 4;
+  double price     = 5;
+  string status    = 6;
+  string createdAt = 7;
+}
+
+message GetOrderRequest {
+  string id = 1;
+}
+
+message GetAllOrdersRequest {}
+
+message OrderListResponse {
+  repeated OrderResponse orders = 1;
+}
+
+message UpdateOrderRequest {
+  string id       = 1;
+  string status   = 2;
+}
+
+message DeleteOrderRequest {
+  string id = 1;
+}
+
+message DeleteOrderResponse {
+  bool success    = 1;
+  string message = 2;
+}
+
+// Service
+
+service OrderService {
+  rpc CreateOrder  (CreateOrderRequest)  returns (OrderResponse);
+  rpc GetOrder     (GetOrderRequest)     returns (OrderResponse);
+  rpc GetAllOrders (GetAllOrdersRequest) returns (OrderListResponse);
+  rpc UpdateOrder  (UpdateOrderRequest)  returns (OrderResponse);
+  rpc DeleteOrder  (DeleteOrderRequest)  returns (DeleteOrderResponse);
+}

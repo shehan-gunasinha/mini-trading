@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: notification-service
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # Read one message at a time (good for learning)
+      max-poll-records: 10
+
+kafka:
+  topics:
+    order-created: order.created
+    order-updated: order.updated
+    order-deleted: order.deleted
+
+logging:
+  level:
+    com.trading.notificationservice: DEBUG
