@@ -6,13 +6,15 @@ option java_multiple_files = true;
 option java_package = "com.trading.orderservice.grpc";
 option java_outer_classname = "OrderProto";
 
-// Messages
-// the 1,2,3... are the filed numbers that helps to identify field inside a coded message
+// =========================
+// ORDER MESSAGES
+// =========================
+
 message CreateOrderRequest {
-  string symbol    = 1;
-  string side      = 2;   // BUY or SELL
-  double quantity  = 3;
-  double price     = 4;
+  string symbol   = 1;
+  string side     = 2; // BUY or SELL
+  double quantity = 3;
+  double price    = 4;
 }
 
 message OrderResponse {
@@ -36,8 +38,8 @@ message OrderListResponse {
 }
 
 message UpdateOrderRequest {
-  string id       = 1;
-  string status   = 2;
+  string id     = 1;
+  string status = 2;
 }
 
 message DeleteOrderRequest {
@@ -45,16 +47,42 @@ message DeleteOrderRequest {
 }
 
 message DeleteOrderResponse {
-  bool success    = 1;
+  bool success  = 1;
   string message = 2;
 }
 
-// Service
+// =========================
+// CACHE STATS MESSAGES
+// =========================
+
+message CacheStatsRequest {}
+
+message CacheStats {
+  int64 size      = 1;
+  int64 hits      = 2;
+  int64 misses    = 3;
+  int64 stores    = 4;
+  int64 evictions = 5;
+  double hitRatio = 6;
+}
+
+message CacheStatsResponse {
+  map<string, CacheStats> caches = 1;
+}
+
+// =========================
+// SERVICE DEFINITION
+// =========================
 
 service OrderService {
+
+  // -------- CRUD --------
   rpc CreateOrder  (CreateOrderRequest)  returns (OrderResponse);
   rpc GetOrder     (GetOrderRequest)     returns (OrderResponse);
   rpc GetAllOrders (GetAllOrdersRequest) returns (OrderListResponse);
   rpc UpdateOrder  (UpdateOrderRequest)  returns (OrderResponse);
   rpc DeleteOrder  (DeleteOrderRequest)  returns (DeleteOrderResponse);
+
+  // -------- CACHE --------
+  rpc GetCacheStats (CacheStatsRequest) returns (CacheStatsResponse);
 }

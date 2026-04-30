@@ -22,6 +22,7 @@
 		<java.version>21</java.version>
 		<grpc.version>1.61.0</grpc.version>
 		<protobuf.version>3.25.0</protobuf.version>
+		<infinispan.version>15.0.10.Final</infinispan.version>
 	</properties>
 
 	<dependencies>
@@ -30,6 +31,19 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- Spring Boot Cache -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
+		<!-- ✅ FIXED: Single Infinispan starter replaces 3 separate modules -->
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-spring-boot3-starter-embedded</artifactId>
+			<version>${infinispan.version}</version>
 		</dependency>
 
 		<!-- JDBC -->
@@ -64,13 +78,11 @@
 			<artifactId>grpc-netty-shaded</artifactId>
 			<version>${grpc.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-protobuf</artifactId>
 			<version>${grpc.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-stub</artifactId>
@@ -84,7 +96,7 @@
 			<version>${protobuf.version}</version>
 		</dependency>
 
-		<!-- Required for Java 17+ -->
+		<!-- Required for Java 17+ gRPC generated code -->
 		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>
@@ -99,7 +111,7 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- JSON -->
+		<!-- Jackson JSON -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -111,7 +123,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka-test</artifactId>

@@ -9,6 +9,9 @@ import com.trading.orderservice.kafka.producer.OrderEventProducer;
 import com.trading.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -45,14 +48,26 @@ public class OrderService {
         return toResponse(saved);
     }
 
-    //  READ by ID 
+    //  READ by ID
+    //cache Miss in first call(fetch data from DB)
+    //cache Hit from 2nd call(fetch data from infinspan)
+    @Cacheable(value = "orders", key = "#id")
     public OrderResponse getOrderById(UUID id) {
+        log.debug("Cache MISS → fetching from DB: id={}", id);
         return orderRepository.findById(id)
-                .map(this::toResponse)
+                .map(order -> {
+                    OrderResponse response = toResponse(order);
+                    response.setFromCache(false);   //fresh from DB
+                    return response;
+                })
                 .orElseThrow(() -> new RuntimeException("Order not found: " + id));
     }
 
-    //  READ all 
+
+
+
+    //  READ all
+    @Cacheable(value="orders-list",key="'all'")
     public List<OrderResponse> getAllOrders() {
         return orderRepository.findAll()
                 .stream()
@@ -60,7 +75,12 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    //  UPDATE 
+    //  UPDATE
+    //evict is needed for update.after updating, data should fetch from the DB
+    @Caching(evict = {
+            @CacheEvict(value = "orders",key="#id"),
+            @CacheEvict(value ="orders-List",key="'all'")
+    })
     public OrderResponse updateOrder(UUID id, UpdateOrderRequest request) {
         Order updated = orderRepository.updateStatus(id, request.getStatus().toUpperCase())
                 .orElseThrow(() -> new RuntimeException("Order not found: " + id));
@@ -71,7 +91,12 @@ public class OrderService {
         return toResponse(updated);
     }
 
-    // DELET
+    // DELETE
+    // evicting is needed after deleting
+    @Caching(evict={
+            @CacheEvict(value="orders",key="#id"),
+            @CacheEvict(value="orders-list",key="'all'")
+    })
     public void deleteOrder(UUID id) {
         boolean deleted = orderRepository.deleteById(id);
         if (!deleted) {

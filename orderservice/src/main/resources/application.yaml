@@ -8,6 +8,12 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
 
+  autoconfigure:
+    exclude:
+      - org.infinispan.spring.starter.embedded.InfinispanEmbeddedAutoConfiguration
+      - org.infinispan.spring.starter.embedded.InfinispanEmbeddedCacheManagerAutoConfiguration
+
+
   kafka:
     bootstrap-servers: localhost:9092
     producer:
@@ -25,6 +31,16 @@ kafka:
     order-created: order.created
     order-updated: order.updated
     order-deleted: order.deleted
+
+
+cache:
+  orders:
+    max-entries: 100 #maximum number od orders to cache
+    ttl-seconds: 300 #expire after 5 min
+
+  orders-list:
+    max-entries: 10 #cache 10 maximum lists
+    ttl-seconds: 60
 
 logging:
   level:
